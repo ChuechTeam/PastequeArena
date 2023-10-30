@@ -66,6 +66,14 @@ android {
         }
     }
 
+    sourceSets {
+        named("main") {
+            if (nativeProjectDir != null) {
+                assets.srcDir(nativeProjectDir.resolve("assets"))
+            }
+        }
+    }
+
     val configureCMake by tasks.registering(Exec::class) {
         if (nativeProjectDir == null) {
             throw IllegalStateException("Cannot compile: project not found.")

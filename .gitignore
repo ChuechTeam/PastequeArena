@@ -473,3 +473,5 @@ external/**
 
 .idea/**
 !.idea/vcs.xml
+
+CMakeSettings.json

@@ -3,6 +3,9 @@
 #include <raymath.h>
 #include <stdint.h>
 #include <raygui.h>
+#include <AssetLoader.h>
+
+using namespace PastequeArena;
 
 int main() {
     // Initialization
@@ -25,8 +28,10 @@ int main() {
     // SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
-    raylib::Vector2 touch = { 0.0f, 0.0f };
-    touch += {7.5f, 2.5f};
+    raylib::Vector2 touch;
+
+    AssetLoader loader;
+    raylib::Texture2D tex = loader.LoadTexture("choc.png");
 
     // Main game loop
     while (!window.ShouldClose())    // Detect window close button or ESC key
@@ -45,12 +50,7 @@ int main() {
         raylib::DrawText(":D", 300, 300, 48, RED);
 
         touch = GetTouchPosition(0);
-        DrawCircleV(touch, 30, RED);
-
-
-        if (IsWindowResized()) {
-            window.SetSize(GetScreenWidth(), GetScreenHeight());
-        }
+        tex.Draw(touch - raylib::Vector2(tex.GetSize()) / 2);
 
         window.EndDrawing();
         //----------------------------------------------------------------------------------
