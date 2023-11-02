@@ -15,11 +15,19 @@ add_subdirectory(external)
 # Also, that enables people using generated Visual Studio sln files
 # to add files without having to re-run CMake.
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
+# This is only necessary for convenience in Visual Studio,
+# no need for CONFIGURE_DEPENDS as this only needs to be refreshed
+# at generation time (running cmake ..).
+if (CMAKE_GENERATOR MATCHES "Visual Studio")
+    file(GLOB_RECURSE HEADERS src/*.h)
+else ()
+    set(HEADERS) # Empty
+endif ()
 
 if (${PLATFORM} STREQUAL "Android")
-    add_library(PastequeArena SHARED ${SOURCES})
+    add_library(PastequeArena SHARED ${SOURCES} ${HEADERS})
 else ()
-    add_executable(PastequeArena ${SOURCES})
+    add_executable(PastequeArena ${SOURCES} ${HEADERS})
 endif ()
 
 # -----------------
@@ -29,9 +37,15 @@ endif ()
 target_include_directories(PastequeArena PRIVATE "${CMAKE_CURRENT_LIST_DIR}/src" "${CMAKE_CURRENT_LIST_DIR}/external/raygui")
 target_link_libraries(PastequeArena raylib raylib_cpp)
 
-target_compile_definitions(PastequeArena PRIVATE RAYGUI_IMPLEMENTATION=1)
-
-STRING(REGEX REPLACE "/RTC(su|[1su])" "" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
+# Precompile headers that are often used, and rarely changed.
+# Usually, external libraries and std headers are put there,
+# especially when they are included in a commonly-used header (such as Engine.h).
+target_precompile_headers(PastequeArena PRIVATE
+        <raylib-cpp.hpp>
+        <filesystem>
+        <array>
+        <vector>
+        <cstdint>)
 
 if (MSVC)
     target_compile_options(PastequeArena PRIVATE /fp:fast /W3)
@@ -49,7 +63,6 @@ endif ()
 
 # Fix for Android on CLion
 if (${PLATFORM} STREQUAL "Android")
-    message(STATUS "salut à tous")
     if (CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
         target_compile_options(raylib PUBLIC "--target=armv7-none-linux-androideabi${CMAKE_SYSTEM_VERSION}")
     elseif (CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
@@ -64,10 +77,10 @@ endif ()
 target_compile_definitions(PastequeArena PRIVATE PA_PACKAGED=${PA_PACKAGED})
 if (PA_PACKAGED)
     # TODO?
-else()
+else ()
     set(ASSETS_DIR "${CMAKE_CURRENT_LIST_DIR}/assets")
     target_compile_definitions(PastequeArena PRIVATE PA_DEV_ASSETS_DIR="${ASSETS_DIR}")
-endif()
+endif ()
 
 # -----------------
 # OS INFO

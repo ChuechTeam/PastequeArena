@@ -18,8 +18,14 @@ namespace PastequeArena {
     public:
         AssetLoader();
 
+        // TODO:
+        //   - What's the lifetime of an asset?
+        //   - How long is it loaded into memory?
+        //   - How to handle duplicate assets loaded from the same file (textures & fonts)?
+
         raylib::Image LoadImage(const char* path);
         raylib::Texture LoadTexture(const char *path);
+        raylib::Font LoadFont(const char* path, int fontSize);
 
     private:
         std::filesystem::path assetRootPath;

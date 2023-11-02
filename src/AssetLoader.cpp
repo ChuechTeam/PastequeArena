@@ -23,4 +23,8 @@ namespace PastequeArena {
     raylib::Texture AssetLoader::LoadTexture(const char *path) {
         return raylib::Texture{(assetRootPath / std::filesystem::path{path}).string()};
     }
+
+    raylib::Font AssetLoader::LoadFont(const char *path, int fontSize) {
+        return raylib::Font{(assetRootPath / std::filesystem::path{path}).string(), fontSize};
+    }
 } // PastequeArena
