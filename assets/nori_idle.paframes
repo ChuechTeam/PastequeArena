@@ -1,0 +1,10 @@
+image=nori_idle01.png
+worldScale=0.0058
+:frame
+    textureRect=0,0,341,341
+    pivot=170,341
+    :collider
+        origin=170,170
+        extent=170,170
+        isHitBox=1
+        isHurtBox=0

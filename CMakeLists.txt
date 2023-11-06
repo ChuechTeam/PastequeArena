@@ -42,6 +42,7 @@ target_link_libraries(PastequeArena raylib raylib_cpp)
 # especially when they are included in a commonly-used header (such as Engine.h).
 target_precompile_headers(PastequeArena PRIVATE
         <raylib-cpp.hpp>
+        <raygui.h>
         <filesystem>
         <array>
         <vector>

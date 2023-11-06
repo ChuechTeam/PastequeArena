@@ -23,9 +23,13 @@ namespace PastequeArena {
         //   - How long is it loaded into memory?
         //   - How to handle duplicate assets loaded from the same file (textures & fonts)?
 
-        raylib::Image LoadImage(const char* path);
+        raylib::Image LoadImage(const char *path);
+
         raylib::Texture LoadTexture(const char *path);
-        raylib::Font LoadFont(const char* path, int fontSize);
+
+        raylib::Font LoadFont(const char *path, int fontSize);
+
+        [[nodiscard]] const std::filesystem::path& GetAssetRootPath() const { return assetRootPath; }
 
     private:
         std::filesystem::path assetRootPath;

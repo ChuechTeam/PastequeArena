@@ -48,8 +48,12 @@ namespace PastequeArena {
             // Update stage
             // ----------------------------------------------------------------------------------
 
+            // Store the current number of scenes for this tick,
+            // so we don't update or draw scenes that are added during the update.
+            int numScenesOnTick = this->numScenes;
+
             // Update all scenes.
-            for (int32_t i = 0; i < numScenes; i++) {
+            for (int32_t i = 0; i < numScenesOnTick; i++) {
                 scenes[i]->Update();
             }
 
@@ -60,7 +64,7 @@ namespace PastequeArena {
             window.ClearBackground(RAYWHITE);
 
             // Draw all scenes.
-            for (int32_t i = 0; i < numScenes; i++) {
+            for (int32_t i = 0; i < numScenesOnTick; i++) {
                 scenes[i]->Draw();
             }
 

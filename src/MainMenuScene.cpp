@@ -1,5 +1,6 @@
 #include "MainMenuScene.h"
 #include "FightScene.h"
+#include "FrameDataEditorScene.h"
 #include <raygui.h>
 
 /*
@@ -39,6 +40,15 @@ public:
         if (GuiButton(raylib::Rectangle(buttonPos, buttonSize), "Play")) {
             engine.AddScene(FightScene::Create(engine));
             engine.UnloadScene(*this);
+            return;
+        }
+
+        const RVector2 button2Size{250, 40};
+        if (GuiButton(raylib::Rectangle{(screen.x - button2Size.x)/2, screen.y - button2Size.y - 8,
+                                        button2Size.x, button2Size.y}, "Frame data editor")) {
+            engine.AddScene(FrameDataEditorScene::Create(engine));
+            engine.UnloadScene(*this);
+            return;
         }
     }
 
