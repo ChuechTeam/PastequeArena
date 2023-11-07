@@ -47,12 +47,28 @@ inline FixedInt operator-(FixedInt a, FixedInt other) {
 inline FixedInt operator*(FixedInt a, FixedInt other) {
     // M = (p*n)*(p*m) = p*p*(n*m)
     // M / p = p*(n*m)
-    return FixedInt::Raw((a.raw * other.raw) / FixedInt::precision);
+    // Divide the maximum between a and other to avoid overflow.
+    if (a.raw > other.raw) {
+        return FixedInt::Raw(a.raw / FixedInt::precision * other.raw);
+    } else {
+        return FixedInt::Raw(other.raw / FixedInt::precision * a.raw);
+    }
 }
 
 inline FixedInt operator/(FixedInt a, FixedInt other) {
     // (p * p * n)/(p * m) = p*(n/m)
-    return FixedInt::Raw((a.raw * FixedInt::precision) / other.raw);
+
+    // For positive numbers, overflow occurs when:
+    //      |p * p * a| > INT32_MAX
+    //  <=> |a| > INT32_MAX/p^2
+    // Only use "high precision" division when we're sure that this value won't overflow
+
+    if (abs(a.raw) < INT32_MAX / FixedInt::precision*FixedInt::precision) {
+        return FixedInt::Raw((a.raw * FixedInt::precision) / other.raw);
+    }
+    else {
+        return FixedInt::Raw((a.raw / other.raw) * FixedInt::precision);
+    }
 }
 
 inline FixedInt operator+=(FixedInt& a, FixedInt other) {
