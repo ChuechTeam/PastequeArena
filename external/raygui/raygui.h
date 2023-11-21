@@ -246,7 +246,7 @@
 *       0.8 (27-Aug-2015) Initial release. Implemented by Kevin Gato, Daniel Nicolás and Ramon Santamaria.
 *
 *   DEPENDENCIES:
-*       raylib 4.6-dev      Inputs reading (keyboard/mouse), shapes drawing, font loading and text drawing
+*       raylib 5.0  - Inputs reading (keyboard/mouse), shapes drawing, font loading and text drawing
 *
 *   STANDALONE MODE:
 *       By default raygui depends on raylib mostly for the inputs and the drawing functionality but that dependency can be disabled
@@ -319,22 +319,22 @@
 #define RAYGUI_VERSION  "4.0"
 
 #if !defined(RAYGUI_STANDALONE)
-    #include "raylib.h"
+#include "raylib.h"
 #endif
 
 // Function specifiers in case library is build/used as a shared library (Windows)
 // NOTE: Microsoft specifiers to tell compiler that symbols are imported/exported from a .dll
 #if defined(_WIN32)
-    #if defined(BUILD_LIBTYPE_SHARED)
-        #define RAYGUIAPI __declspec(dllexport)     // We are building the library as a Win32 shared library (.dll)
-    #elif defined(USE_LIBTYPE_SHARED)
-        #define RAYGUIAPI __declspec(dllimport)     // We are using the library as a Win32 shared library (.dll)
-    #endif
+#if defined(BUILD_LIBTYPE_SHARED)
+#define RAYGUIAPI __declspec(dllexport)     // We are building the library as a Win32 shared library (.dll)
+#elif defined(USE_LIBTYPE_SHARED)
+#define RAYGUIAPI __declspec(dllimport)     // We are using the library as a Win32 shared library (.dll)
+#endif
 #endif
 
 // Function specifiers definition
 #ifndef RAYGUIAPI
-    #define RAYGUIAPI       // Functions defined as 'extern' by default (implicit specifiers)
+#define RAYGUIAPI       // Functions defined as 'extern' by default (implicit specifiers)
 #endif
 
 //----------------------------------------------------------------------------------
@@ -342,22 +342,22 @@
 //----------------------------------------------------------------------------------
 // Allow custom memory allocators
 #ifndef RAYGUI_MALLOC
-    #define RAYGUI_MALLOC(sz)       malloc(sz)
+#define RAYGUI_MALLOC(sz)       malloc(sz)
 #endif
 #ifndef RAYGUI_CALLOC
-    #define RAYGUI_CALLOC(n,sz)     calloc(n,sz)
+#define RAYGUI_CALLOC(n,sz)     calloc(n,sz)
 #endif
 #ifndef RAYGUI_FREE
-    #define RAYGUI_FREE(p)          free(p)
+#define RAYGUI_FREE(p)          free(p)
 #endif
 
 // Simple log system to avoid printf() calls if required
 // NOTE: Avoiding those calls, also avoids const strings memory usage
 #define RAYGUI_SUPPORT_LOG_INFO
 #if defined(RAYGUI_SUPPORT_LOG_INFO)
-  #define RAYGUI_LOG(...)           printf(__VA_ARGS__)
+#define RAYGUI_LOG(...)           printf(__VA_ARGS__)
 #else
-  #define RAYGUI_LOG(...)
+#define RAYGUI_LOG(...)
 #endif
 
 //----------------------------------------------------------------------------------
@@ -365,7 +365,7 @@
 // NOTE: Some types are required for RAYGUI_STANDALONE usage
 //----------------------------------------------------------------------------------
 #if defined(RAYGUI_STANDALONE)
-    #ifndef __cplusplus
+#ifndef __cplusplus
     // Boolean type
         #ifndef true
             typedef enum { false, true } bool;
@@ -2625,8 +2625,6 @@ int GuiTextBox(Rectangle bounds, char *text, int bufferSize, bool editMode)
             if (CheckCollisionPointRec(mousePosition, textBounds))     // Mouse hover text
             {
                 float scaleFactor = (float)GuiGetStyle(DEFAULT, TEXT_SIZE)/(float)guiFont.baseSize;
-                int codepoint = 0;
-                int codepointSize = 0;
                 int codepointIndex = 0;
                 float glyphWidth = 0.0f;
                 float widthToMouseX = 0;
@@ -2655,7 +2653,7 @@ int GuiTextBox(Rectangle bounds, char *text, int bufferSize, bool editMode)
                 if (GetMousePosition().x >= (textBounds.x + textEndWidth - glyphWidth/2))
                 {
                     mouseCursor.x = textBounds.x + textEndWidth;
-                    mouseCursorIndex = strlen(text);
+                    mouseCursorIndex = (int)strlen(text);
                 }
 
                 // Place cursor at required index on mouse click
@@ -2937,6 +2935,7 @@ int GuiValueBox(Rectangle bounds, const char *text, int *value, int minValue, in
 int GuiSliderPro(Rectangle bounds, const char *textLeft, const char *textRight, float *value, float minValue, float maxValue, int sliderWidth)
 {
     int result = 0;
+    float oldValue = *value;
     GuiState state = guiState;
 
     float temp = (maxValue - minValue)/2.0f;
@@ -3005,6 +3004,10 @@ int GuiSliderPro(Rectangle bounds, const char *textLeft, const char *textRight, 
         if (*value > maxValue) *value = maxValue;
         else if (*value < minValue) *value = minValue;
     }
+
+    // Control value change check
+    if(oldValue == *value) result = 0;
+    else result = 1;
 
     // Bar limits check
     if (sliderWidth > 0)        // Slider
@@ -3366,8 +3369,7 @@ int GuiColorPanel(Rectangle bounds, const char *text, Color *color)
     pickerSelector.x = bounds.x + (float)hsv.y*bounds.width;            // HSV: Saturation
     pickerSelector.y = bounds.y + (1.0f - (float)hsv.z)*bounds.height;  // HSV: Value
 
-    float hue = -1.0f;
-    Vector3 maxHue = { (hue >= 0.0f)? hue : hsv.x, 1.0f, 1.0f };
+    Vector3 maxHue = { hsv.x, 1.0f, 1.0f };
     Vector3 rgbHue = ConvertHSVtoRGB(maxHue);
     Color maxHueCol = { (unsigned char)(255.0f*rgbHue.x),
                       (unsigned char)(255.0f*rgbHue.y),
@@ -3680,8 +3682,7 @@ int GuiColorPanelHSV(Rectangle bounds, const char *text, Vector3 *colorHsv)
     pickerSelector.x = bounds.x + (float)colorHsv->y*bounds.width;            // HSV: Saturation
     pickerSelector.y = bounds.y + (1.0f - (float)colorHsv->z)*bounds.height;  // HSV: Value
 
-    float hue = -1.0f;
-    Vector3 maxHue = { (hue >= 0.0f)? hue : colorHsv->x, 1.0f, 1.0f };
+    Vector3 maxHue = { colorHsv->x, 1.0f, 1.0f };
     Vector3 rgbHue = ConvertHSVtoRGB(maxHue);
     Color maxHueCol = { (unsigned char)(255.0f*rgbHue.x),
                       (unsigned char)(255.0f*rgbHue.y),
@@ -4173,8 +4174,7 @@ void GuiLoadStyleDefault(void)
         Rectangle whiteChar = guiFont.recs[95];
 
         // NOTE: We set up a 1px padding on char rectangle to avoid pixel bleeding on MSAA filtering
-        // Maxtro mod: this is causing color issues??
-        // SetShapesTexture(guiFont.texture, RAYGUI_CLITERAL(Rectangle){ whiteChar.x + 1, whiteChar.y + 1, whiteChar.width - 2, whiteChar.height - 2 });
+        SetShapesTexture(guiFont.texture, RAYGUI_CLITERAL(Rectangle){ whiteChar.x + 1, whiteChar.y + 1, whiteChar.width - 2, whiteChar.height - 2 });
     }
 }
 
@@ -4187,7 +4187,7 @@ const char *GuiIconText(int iconId, const char *text)
     return NULL;
 #else
     static char buffer[1024] = { 0 };
-    static char iconBuffer[6] = { 0 };
+    static char iconBuffer[16] = { 0 };
 
     if (text != NULL)
     {
@@ -4204,7 +4204,7 @@ const char *GuiIconText(int iconId, const char *text)
     }
     else
     {
-        sprintf(iconBuffer, "#%03i#", iconId & 0x1ff);
+        sprintf(iconBuffer, "#%03i#", iconId);
 
         return iconBuffer;
     }
@@ -4829,6 +4829,9 @@ static void GuiDrawText(const char *text, Rectangle textBounds, int alignment, C
         for (int c = 0; (lines[i][c] != '\0') && (lines[i][c] != '\n') && (lines[i][c] != '\r'); c++, lineSize++){ }
         float scaleFactor = (float)GuiGetStyle(DEFAULT, TEXT_SIZE)/guiFont.baseSize;
 
+        int lastSpaceIndex = 0;
+        bool tempWrapCharMode = false;
+
         int textOffsetY = 0;
         float textOffsetX = 0.0f;
         float glyphWidth = 0;
@@ -4839,10 +4842,10 @@ static void GuiDrawText(const char *text, Rectangle textBounds, int alignment, C
 
             // NOTE: Normally we exit the decoding sequence as soon as a bad byte is found (and return 0x3f)
             // but we need to draw all of the bad bytes using the '?' symbol moving one byte
-            if (codepoint == 0x3f) codepointSize = 1;       // TODO: Review not recognized codepoints size
+            if (codepoint == 0x3f) codepointSize = 1; // TODO: Review not recognized codepoints size
 
-            // Wrap mode text measuring to space to validate if it can be drawn or
-            // a new line is required
+            // Wrap mode text measuring, to validate if
+            // it can be drawn or a new line is required
             if (wrapMode == TEXT_WRAP_CHAR)
             {
                 // Get glyph width to check if it goes out of bounds
@@ -4854,21 +4857,36 @@ static void GuiDrawText(const char *text, Rectangle textBounds, int alignment, C
                 {
                     textOffsetX = 0.0f;
                     textOffsetY += GuiGetStyle(DEFAULT, TEXT_LINE_SPACING);
+
+                    if (tempWrapCharMode)   // Wrap at char level when too long words
+                    {
+                        wrapMode = TEXT_WRAP_WORD;
+                        tempWrapCharMode = false;
+                    }
                 }
             }
             else if (wrapMode == TEXT_WRAP_WORD)
             {
+                if (codepoint == 32) lastSpaceIndex = c;
+
                 // Get width to next space in line
                 int nextSpaceIndex = 0;
                 float nextSpaceWidth = GetNextSpaceWidth(lines[i] + c, &nextSpaceIndex);
 
-                if ((textOffsetX + nextSpaceWidth) > textBounds.width)
+                int nextSpaceIndex2 = 0;
+                float nextWordSize = GetNextSpaceWidth(lines[i] + lastSpaceIndex + 1, &nextSpaceIndex2);
+
+                if (nextWordSize > textBounds.width)
+                {
+                    // Considering the case the next word is longer than bounds
+                    tempWrapCharMode = true;
+                    wrapMode = TEXT_WRAP_CHAR;
+                }
+                else if ((textOffsetX + nextSpaceWidth) > textBounds.width)
                 {
                     textOffsetX = 0.0f;
                     textOffsetY += GuiGetStyle(DEFAULT, TEXT_LINE_SPACING);
                 }
-
-                // TODO: Consider case: (nextSpaceWidth >= textBounds.width)
             }
 
             if (codepoint == '\n') break;   // WARNING: Lines are already processed manually, no need to keep drawing after this codepoint

@@ -2,13 +2,13 @@
 
 using namespace PastequeArena;
 
-std::ostream& PastequeArena::operator<<(std::ostream& os, const FrameData::IntVec2& v) {
+std::ostream& operator<<(std::ostream& os, const Math::Vec2<int32_t>& v) {
     os << v.x << "," << v.y;
     return os;
 }
 
-std::ostream& PastequeArena::operator<<(std::ostream& os, const FrameData::IntRect& r) {
-    os << r.x << "," << r.y << "," << r.width << "," << r.height;
+std::ostream& operator<<(std::ostream& os, const Math::Rect<int32_t>& r) {
+    os << r.origin.x << "," << r.origin.y << "," << r.extent.x << "," << r.extent.y;
     return os;
 }
 
@@ -30,7 +30,10 @@ void FrameData::WriteToStream(std::ostream& stream) {
             stream << "    extent=" << collider.extent << std::endl;
             stream << "    isHitBox=" << BoolToInt(collider.isHitBox) << std::endl;
             stream << "    isHurtBox=" << BoolToInt(collider.isHurtBox) << std::endl;
+            stream << "  :" << std::endl;
         }
+
+        stream << ":" << std::endl;
     }
 }
 

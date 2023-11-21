@@ -24,7 +24,7 @@ using namespace PastequeArena;
 class ActualMainMenuScene final : public MainMenuScene {
 public:
     explicit ActualMainMenuScene(Engine& engine) : MainMenuScene(engine) {
-        font = engine.GetAssetLoader().LoadFont("RussoOne-regular.ttf", 48);
+        font = engine.GetAssetLoader().LoadFont("RussoOne-Regular.ttf", 48);
     }
 
     void Draw() override {

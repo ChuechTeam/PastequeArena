@@ -4,6 +4,8 @@
 #include <raygui.h>
 #include "FrameData.h"
 #include <iostream>
+#include "Math/Vec.h"
+#include "Math/Rect.h"
 using namespace PastequeArena;
 
 int main() {

@@ -4,34 +4,22 @@
 #include "FixedInt.h"
 #include <string>
 #include <strstream>
+#include "Math/Vec.h"
+#include "Math/Rect.h"
 
 namespace PastequeArena {
     struct FrameData {
-        struct IntVec2 {
-            int x = 0;
-            int y = 0;
-
-            friend std::ostream& operator<<(std::ostream& os, const IntVec2& v);
-        };
-
-        struct IntRect {
-            int x = 0;
-            int y = 0;
-            int width = 0;
-            int height = 0;
-
-            friend std::ostream& operator<<(std::ostream& os, const IntRect& v);
-        };
+        using PixelVec = Math::Vec2<int32_t>;
 
         struct Collider {
-            IntVec2 origin;
-            IntVec2 extent;
+            PixelVec origin;
+            PixelVec extent;
             bool isHitBox = false;
             bool isHurtBox = false;
         };
         struct Frame {
-            IntRect textureRect;
-            IntVec2 pivot;
+            Math::Rect<int32_t> textureRect;
+            PixelVec pivot;
 
             std::vector<Collider> colliders;
         };

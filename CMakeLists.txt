@@ -35,7 +35,7 @@ endif ()
 # -----------------
 
 target_include_directories(PastequeArena PRIVATE "${CMAKE_CURRENT_LIST_DIR}/src" "${CMAKE_CURRENT_LIST_DIR}/external/raygui")
-target_link_libraries(PastequeArena raylib raylib_cpp)
+target_link_libraries(PastequeArena raylib raylib_cpp Bitsery::bitsery)
 
 # Precompile headers that are often used, and rarely changed.
 # Usually, external libraries and std headers are put there,

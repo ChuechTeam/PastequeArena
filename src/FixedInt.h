@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+using real = float;
+
 // A signed 32-bit integer with a fixed decimal precision of 4 digits.
 // MAX = INT32_MAX / 10000 = 214748.3647
 // MIN = INT32_MIN / 10000 = -214748.3648
